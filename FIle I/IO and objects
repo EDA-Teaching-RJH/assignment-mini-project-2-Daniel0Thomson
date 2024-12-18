@@ -1,0 +1,73 @@
+import os #this imports the os library which allows the code to interact with the operating system, it specifically assists with the the file system
+
+def file_exists(file_name):#defines the file_exists 
+    if os.path.exists(file_name):
+        return True#if the file exists, it will print 'true'
+    else:# if this is not true
+        print(f"File '{file_name}' does not exist. Please create or add students first.")
+        return False#it will print this statement ^ and return False
+
+def add_student_to_file(student_name, student_age, student_grade):#this is defining the add_student_to_file function, makes a file which adds the 3 parameters listed below
+    with open('students.txt', 'a') as file:
+        file.write(f"{student_name}, {student_age}, {student_grade}\n")
+
+def show_students():#this file retrieves and print a list of students
+    if not file_exists('students.txt'):
+        return
+    with open('students.txt', 'r') as file:#open contents of the requested .txt
+        print("List of Students:")
+        for line in file:
+            print(line.strip())#prints the file in a user-friendky format
+
+def search_student(student_name):#this function searches and retrieves the student records and gives an appropriate message whether or not the file exists
+    if not file_exists('students.txt'):#calls the file_exists to check the validity of students.txt
+        return "Student records are unavailable, no files found"#error handling if the file does not exist
+    with open('students.txt', 'r') as file:#opens file in read mode and with makes sure it simeultaneously closed after function is completed
+        for line in file:
+            if student_name in line:#checks if the name is in the file 
+                return f"Student has been found: {line.strip()}"#this removes any excess whitespace
+    return "Student not found."
+
+class Student:#creates new class with name, age and grade attributes
+    def __init__(self, name, age, grade):#__init__ is class automatically called when a new Student is created
+        self.name = name
+        self.age = age #these parameters are sel explanatory
+        self.grade = grade
+
+    def __str__(self):#this defines that the student is represented a s astring if it is printed or converted to a string
+        return f"{self.name} (Age: {self.age}, Grade: {self.grade})"#the f string allows you to define values into this string which in this case are the variables
+
+class Course:
+    def __init__(self, course_name, course_code):#sets up a course with the provided attributes
+        self.course_name = course_name
+        self.course_code = course_code#these are self explanatory
+        self.students = []
+
+    def enroll_student(self, student):#adds the students to the class
+        self.students.append(student)
+
+    def list_students(self):#this function prints the list of students enrolled
+        print(f"Students enrolled in {self.course_name}:")
+        for student in self.students:
+            print(student)
+
+def main():
+    gregg = Student("Gregg Doe", 20, "Sophomore")#this creates two Student objects 
+    barbra = Student("Barbra Smith", 22, "Senior")#inputs their name, age and grade in the brackets
+
+    programming_course = Course("Intro to Python", "EENG3130")#this calls list_students of the programming_course and prints details of the enrolled students
+    programming_course.enroll_student(gregg)
+    programming_course.enroll_student(barbra)
+
+    programming_course.list_students()
+
+    add_student_to_file(gregg.name, gregg.age, gregg.grade)#saves the details to the student.txt 
+    add_student_to_file(barbra.name, barbra.age, barbra.grade)
+
+    show_students()#calls the show_students function to print the list of students
+
+    print(search_student("gregg"))#these specifically search for these students and returns their record 
+    print(search_student("barbra"))
+
+if __name__ == "__main__":#directly executes the script
+    main()
